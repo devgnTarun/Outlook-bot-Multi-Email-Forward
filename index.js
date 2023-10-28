@@ -4,7 +4,7 @@ const TelegramBot = require('node-telegram-bot-api')
 const fs = require('fs');
 
 
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = 1;
 
 //Add email with id and password
 const imapConfig = [{
