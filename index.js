@@ -9,14 +9,14 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
 //Add email with id and password
 const imapConfig = [{
     user: "devtar28k@outlook.com",
-    password: "-------",
+    password: "Devgan@2003",
     host: "imap-mail.outlook.com",
     port: 993,
     tls: true
 },
 {
     user: "augierthomas.audrey@outlook.com",
-    password: "@-----",
+    password: "@Zerty2016",
     host: "imap-mail.outlook.com",
     port: 993,
     tls: true
