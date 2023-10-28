@@ -2,8 +2,6 @@ const Imap = require('imap')
 const { simpleParser } = require('mailparser')
 const TelegramBot = require('node-telegram-bot-api')
 const fs = require('fs');
-const archiver = require('archiver');
-const zlib = require('zlib')
 
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
@@ -11,7 +9,7 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
 //Add email with id and password
 const imapConfig = [{
     user: "devtar28k@outlook.com",
-    password: "Devgan@2003",
+    password: "-------",
     host: "imap-mail.outlook.com",
     port: 993,
     tls: true
@@ -22,7 +20,7 @@ const imapConfig = [{
     host: "imap-mail.outlook.com",
     port: 993,
     tls: true
-},]
+},] //add accounts in object
 
 
 // Create a Telegram bot
@@ -35,9 +33,11 @@ const bot = new TelegramBot("6645214107:AAEeJ9tPM8uLV54JPvATTdfRuKdtIFXGgpA", {
     polling: true,
 });
 
+
+// for already sended emails 
 let processedEmailIds = new Set(); // Initialize an empty Set
 
-// Load processed email IDs from a file (if it exists)
+// Load processed email IDs from a file (if it exists) then khatam tata bye bye
 try {
     const data = fs.readFileSync('processedEmailIds.txt', 'utf-8');
     processedEmailIds = new Set(data.trim().split('\n'));
@@ -46,13 +46,17 @@ try {
 }
 
 
+// main function 
+
 const getEmails = async (imapConfig) => {
     try {
 
         const imap = new Imap(imapConfig)
 
+        // Once its ready 
         imap.once('ready', () => {
             imap.openBox('INBOX', false, () => {
+                // Unseen mails 
                 imap.search(['UNSEEN', ['SINCE', new Date()]], (err, results) => {
                     const f = imap.fetch(results, { bodies: "" });
                     f.on('message', msg => {
@@ -60,17 +64,18 @@ const getEmails = async (imapConfig) => {
                             simpleParser(stream, async (err, parsed) => {
                                 const emailId = parsed.messageId;
 
+                                // Checking if email already sended  
+
                                 if (!processedEmailIds.has(emailId)) {
-                                    console.log('----------------');
+                                    // console.log('----------------');
                                     const emailData = `From : ${parsed.from.text}\n To : ${parsed.to.text} \n Subject : ${parsed.subject}\n Body :  ${parsed.text}\n Date : ${parsed.date}`;
-                                    console.log(emailData);
+                                    // console.log(emailData);
 
                                     // Process attachments, if any
-
                                     if (parsed.attachments && parsed.attachments.length > 0) {
 
                                         for (const attachment of parsed.attachments) {
-
+                                            // Sending attachment 
                                             await bot.sendDocument(chatId, attachment.content, {
                                                 caption: `From : ${parsed.from.text}\n To: ${parsed.to.text}\n Subject : ${parsed.subject}\n Body : ${parsed.text}\n Date : ${parsed.date}`,
                                             });
@@ -78,9 +83,12 @@ const getEmails = async (imapConfig) => {
                                         }
                                     }
                                     else {
+                                        // sending if no attachment 
                                         bot.sendMessage(chatId, emailData);
                                     }
 
+                                    // adding email id to show its loaded already 
+                                    
                                     processedEmailIds.add(emailId); // Add to the list of processed emails
 
                                     // Save the updated list of processed email IDs to a file
@@ -121,7 +129,12 @@ const getEmails = async (imapConfig) => {
 }
 
 
-// Fetch emails for each configured Outlook account
-for (const imapConfigs of imapConfig) {
-    getEmails(imapConfigs);
+// Too get all emails mails 
+function getEmailsPeriodically() {
+    for (const config of imapConfig) {
+        getEmails(config);
+    }
 }
+
+// Call getEmailsPeriodically every 1 minute (60,000 milliseconds)
+setInterval(getEmailsPeriodically, 60000);
