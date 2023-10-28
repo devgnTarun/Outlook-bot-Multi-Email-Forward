@@ -1,15 +1,17 @@
 const Imap = require('imap')
 const { simpleParser } = require('mailparser')
 const TelegramBot = require('node-telegram-bot-api')
-const fs = require('fs')
-const { Readable } = require('stream');
-const { parse } = require('path');
+const fs = require('fs');
+const archiver = require('archiver');
+const zlib = require('zlib')
+
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
 
+//Add email with id and password
 const imapConfig = [{
     user: "devtar28k@outlook.com",
-    password: "-----",
+    password: "Devgan@2003",
     host: "imap-mail.outlook.com",
     port: 993,
     tls: true
@@ -24,7 +26,11 @@ const imapConfig = [{
 
 
 // Create a Telegram bot
+
+// Channel id 
 const chatId = -1002118992993;
+
+// Bot on 
 const bot = new TelegramBot("6645214107:AAEeJ9tPM8uLV54JPvATTdfRuKdtIFXGgpA", {
     polling: true,
 });
@@ -62,10 +68,13 @@ const getEmails = async (imapConfig) => {
                                     // Process attachments, if any
 
                                     if (parsed.attachments && parsed.attachments.length > 0) {
+
                                         for (const attachment of parsed.attachments) {
+
                                             await bot.sendDocument(chatId, attachment.content, {
                                                 caption: `From : ${parsed.from.text}\n To: ${parsed.to.text}\n Subject : ${parsed.subject}\n Body : ${parsed.text}\n Date : ${parsed.date}`,
                                             });
+
                                         }
                                     }
                                     else {
