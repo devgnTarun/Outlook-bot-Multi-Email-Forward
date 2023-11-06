@@ -9,27 +9,27 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = 1;
 //Add email with id and password
 const imapConfig = [{
     user: "devtar28k@outlook.com",
-    password: "Devgan@2003",
+    password: "YOUR_PASS",
     host: "imap-mail.outlook.com",
     port: 993,
     tls: true
 },
 {
-    user: "augierthomas.audrey@outlook.com",
-    password: "@Zerty2016",
+    user: "ADD_MULTIPLE_EMAIL",
+    password: "YOUR_PASS",
     host: "imap-mail.outlook.com",
     port: 993,
     tls: true
-},] //add accounts in object
+},] //add accounts in form of object
 
 
 // Create a Telegram bot
 
 // Channel id 
-const chatId = -1002118992993;
+const chatId = CHAT_ID;
 
 // Bot on 
-const bot = new TelegramBot("6645214107:AAEeJ9tPM8uLV54JPvATTdfRuKdtIFXGgpA", {
+const bot = new TelegramBot(CHAT_BOT_ID, {
     polling: true,
 });
 
